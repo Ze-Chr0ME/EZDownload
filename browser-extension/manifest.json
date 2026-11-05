@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "105",
+  "name": "Send to EzSocial",
+  "version": "1.1.0",
+  "description": "Send a video page or link to your Windows video folder.",
+  "permissions": ["activeTab", "contextMenus", "nativeMessaging", "notifications", "alarms"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "Download this video with EzSocial"},
+  "icons": {"128": "icon.png"}
+}
