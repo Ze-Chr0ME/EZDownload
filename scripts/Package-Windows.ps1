@@ -6,7 +6,7 @@ $zipPath = Join-Path $projectRoot 'dist\EzSocialToVideo-Windows.zip'
 $file = [IO.File]::Open($zipPath, [IO.FileMode]::Create)
 $zip = New-Object IO.Compression.ZipArchive($file, [IO.Compression.ZipArchiveMode]::Create)
 try {
-    foreach ($folder in @('engine','desktop','android','browser-extension','scripts','tests','dist\EzSocialToVideo')) {
+    foreach ($folder in @('engine','desktop','android','browser-extension','scripts','tests','docs','dist\EzSocialToVideo')) {
         Get-ChildItem -LiteralPath (Join-Path $projectRoot $folder) -Recurse -File | ForEach-Object {
             $relative = $_.FullName.Substring($projectRoot.Length + 1).Replace('\','/')
             if ($relative -match '(^|/)(build|\.gradle|__pycache__)/' -or $_.Name -in @('local.properties','native-host.json') -or $_.Extension -in @('.py','.pyc','.jks')) { return }

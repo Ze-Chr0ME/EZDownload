@@ -1,161 +1,141 @@
-﻿<div align="center">
+﻿# EZDownload
 
-# EZDownload
+Save videos from a link on Windows or Android. Paste a URL into the app, send a page from Chrome or Edge, or use Android's share menu. Downloads run on your device and save as MP4.
 
-**Save a link. Keep the video.**
+The app is called **EzSocial Video** on Android and **EzSocialToVideo** in Windows filenames.
 
-A local video downloader for Windows and Android, with browser sharing, live progress, and a shared Java engine.
+![Windows app with a video link, destination folder, and quality selector](docs/screenshots/windows-ready.png)
 
-![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
-![Android 10+](https://img.shields.io/badge/Android-10%2B-3DDC84)
-![Java 21 build](https://img.shields.io/badge/Build-JDK%2021-orange)
-[![GPL v3 or later](https://img.shields.io/badge/License-GPLv3%2B-blue)](LICENSE)
-
-[Get started](#get-started) · [Supported links](#supported-links) · [Build from source](#build-from-source) · [Troubleshooting](#troubleshooting)
-
-</div>
-
----
-
-## What it does
-
-- **Download on your device.** Links go directly to the source website; no third-party downloader service, account, or subscription is required.
-- **Share from your browser.** A Chrome / Edge extension sends pages or links to the Windows app and shows progress on its toolbar icon.
-- **Share from Android apps.** Send a link from YouTube, Instagram, or another app to download through a foreground notification.
-- **Keep the original quality.** Choose 720p, 1080p, or Best. Separate YouTube video and audio tracks are combined into MP4 without transcoding.
-- **Travel light.** No Python, yt-dlp, Node.js, or FFmpeg runtime is required. Windows includes Java; Android uses its own runtime.
-
-The installed app currently appears as **EzSocial Video** / **EzSocialToVideo**. Those names also appear in filenames and settings paths.
-
-## Get started
-
-This repository contains the source. Build it using the instructions below to produce these files; generated binaries are excluded from Git.
-
-| Platform | Build output | Requirements to run |
-| --- | --- | --- |
-| Windows | `dist/EzSocialToVideo-Windows.zip` | Windows 10 / 11, 64-bit |
-| Android | `dist/EzSocialToVideo-Android.apk` | Android 10 or newer |
+## Using the app
 
 ### Windows
 
-1. Extract the Windows ZIP and open `dist/EzSocialToVideo/EzSocialToVideo.exe` inside it.
-2. Choose a destination folder and quality.
-3. Paste a video link and start the download.
+Extract `EzSocialToVideo-Windows.zip`, then open `dist\EzSocialToVideo\EzSocialToVideo.exe` inside the extracted folder. Keep the `app` and `runtime` folders beside the executable; Java is included.
 
-Keep the entire portable app folder together, including `app` and `runtime`. You do not need to install Java separately. Completed downloads open in File Explorer with the video selected.
+1. Paste a video URL, or click **Paste link**.
+2. Choose where to save it and select **720p**, **1080p**, or **Best**.
+3. Click **Download video**. Progress and the saved filename appear in the window.
+
+**Open folder** opens your destination in Explorer. Downloads sent through the browser extension reveal the saved file automatically.
 
 <details>
-<summary><strong>Set up Chrome / Edge sharing</strong></summary>
+<summary>After a download</summary>
+
+![Windows app after downloading the W3Schools sample MP4](docs/screenshots/windows-saved.png)
+
+Both screenshots show the running Windows app, using the [W3Schools sample video](https://www.w3schools.com/html/mov_bbb.mp4).
+
+</details>
+
+### Chrome and Edge
+
+The extension adds a toolbar button and a **Download with EzSocial** link context-menu action. Its icon shows progress, then a green check or an error indicator.
 
 1. Open `chrome://extensions` or `edge://extensions` and enable **Developer mode**.
-2. Choose **Load unpacked** and select the included `browser-extension` folder.
-3. Copy the extension ID and run the registration script from the extracted ZIP or project root:
+2. Choose **Load unpacked** and select `browser-extension` from the extracted ZIP or source checkout.
+3. Copy the extension ID and run this from the same ZIP or checkout root:
 
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\scripts\Register-Browser.ps1 -ExtensionId YOUR_EXTENSION_ID
    ```
 
-4. Pin **Send to EzSocial**. Click it on a video page, or right-click a link and choose **Download with EzSocial**.
+4. Pin **Send to EzSocial** and click it on a video page.
 
-A ring and percentage track progress without opening the downloader window. A green check means the file was saved; a red exclamation mark and notification report an error. Hover over the icon for the current stage. Multiple downloads show their count on the badge.
-
-Registration allows only the specified extension ID to contact the local native host. No local HTTP server is used. If you move the app, register its new path. After updating the extension, reload it from the browser's extensions page; avoid reloading during a download.
-
-To remove integration, run `scripts/Unregister-Browser.ps1`, then remove the extension. This adds a browser toolbar and context-menu action; YouTube's own sharing popup is controlled by YouTube.
-
-</details>
+Registration connects that extension ID to the local app through browser native messaging. Run it again if you move the app. Reload the extension after updating it, once any active downloads have finished. To remove the integration, run `scripts\Unregister-Browser.ps1` and remove the extension.
 
 ### Android
 
-1. Install the APK, allowing installation from your chosen source when Android prompts you.
-2. Open **EzSocial Video** once and allow notifications.
-3. In the source app, choose **Share → More / Android share menu → Save video with EzSocial**.
+Install `EzSocialToVideo-Android.apk` on Android 10 or newer. Open **EzSocial Video** once and allow notifications.
 
-A notification shows download progress. Finished videos appear in **Movies/EzSocial** and your gallery; tap the completion notification to open one. You can also open the launcher app to paste links or change settings.
+Share a video link from another app, open the Android share menu if needed, and choose **Save video with EzSocial**. You can also paste links into the launcher app. A notification shows progress; finished videos appear in your gallery under **Movies/EzSocial**. Tap the completion notification to open the video.
 
-The APK is universal. The current Android version is **2.0.2** (version code **5**). The `compact` build uses a local debug signing key for testing, not a production release key. Updating an existing install requires the same signing key; another developer's build may require uninstalling the earlier app first.
+Downloads queue one at a time. Cancel stops the current queue. If Android stops the app, share the link again. Leave space for temporary files as well as the final gallery copy.
 
-Downloads queue one at a time. Cancel stops the current queue; later shares can start fresh. Share-menu ordering depends on Android and the source app. Leave enough storage for both temporary files and the final gallery copy. If Android terminates or force-stops the app, share the link again.
+## Which links work?
 
-## Supported links
+| Source | Support |
+| --- | --- |
+| YouTube | MP4 streams via NewPipe Extractor. Separate audio and video tracks are joined without transcoding. |
+| Instagram | Public posts and reels, with anonymous-query and page metadata fallbacks. Carousels use the first available video. |
+| TikTok | Public page metadata and short-link redirects. Extraction is best effort. |
+| Other sites | Direct MP4 URLs and pages exposing compatible video metadata or HTML video sources. |
 
-| Source | How it works | Scope |
-| --- | --- | --- |
-| YouTube | NewPipe Extractor retrieves MP4 streams; mp4parser combines separate tracks | Quality is a ceiling, subject to available streams |
-| Instagram | Anonymous public-post query with page / embed metadata fallbacks | Public posts and reels; first available video in a carousel |
-| TikTok | Reads video URLs from public page data and follows short-link redirects | Best effort; website changes can break extraction |
-| Other websites | Direct MP4 links, Open Graph video metadata, HTML video sources, and supported JSON metadata | Pages exposing compatible public media |
+Quality is a ceiling: the app picks from the streams the source provides. Private or login-gated videos, DRM, livestreams, HLS-only sources, age restrictions, and anti-bot checks may prevent a download. Coverage is narrower than yt-dlp, and site changes can require an app update. Save only videos you have permission to download.
 
-Private or login-gated content, age restrictions, rate limits, anti-bot checks, DRM, livestreams, HLS-only media, and unsupported formats may prevent downloads. This engine focuses on MP4 and has narrower coverage than yt-dlp. Site changes require app updates. Download only videos you are allowed to save.
+The downloader uses a shared Java engine. Neither app needs Python, Node.js, yt-dlp, or FFmpeg installed.
 
 ## Build from source
 
-### Prerequisites
+Generated binaries are excluded from Git. The scripts below produce the Windows app and Android APK.
 
-- **JDK 21**, with `java` and `jpackage` available on `PATH`.
-- **Android SDK** platform **35**, build-tools **35.0.0**, and accepted SDK licenses for Android builds.
-- Network access for the included **Gradle 8.14** wrapper and dependencies from Google Maven, Maven Central, and JitPack.
-- **Node.js** only if you want to run the extension tests; it is not used by either app.
+You need **JDK 21** with `java` and `jpackage` on `PATH`. Android builds also need **Android SDK platform 35**, **build-tools 35.0.0**, and accepted SDK licenses. The included Gradle 8.14 wrapper downloads its dependencies from Google Maven, Maven Central, and JitPack.
 
 ```powershell
 git clone https://github.com/Ze-Chr0ME/EZDownload.git
 cd EZDownload
 
-# Build the portable Windows app (also runs engine tests)
+# Portable Windows app, including its Java runtime; also runs engine tests
 powershell -ExecutionPolicy Bypass -File .\scripts\Build-Windows.ps1
 
-# Build the universal Android test APK
+# Universal Android test APK
 powershell -ExecutionPolicy Bypass -File .\scripts\Build-Android.ps1 -AndroidSdk C:\path\to\Android\Sdk
 
-# Package the Windows app, source, extension, and scripts
+# ZIP with the built Windows app, source, extension, and scripts
 powershell -ExecutionPolicy Bypass -File .\scripts\Package-Windows.ps1
 ```
 
-The Android script also accepts `ANDROID_HOME` instead of `-AndroidSdk`. SDK paths, signing keys, build caches, and generated downloads are not tracked. Configure your own release signing before distributing a production Android release.
+| Output | Location |
+| --- | --- |
+| Windows app | `dist/EzSocialToVideo/EzSocialToVideo.exe` |
+| Windows ZIP | `dist/EzSocialToVideo-Windows.zip` |
+| Android APK | `dist/EzSocialToVideo-Android.apk` |
 
-### Tests
+The Android script also accepts `ANDROID_HOME` instead of `-AndroidSdk`. Its `compact` build is signed with your local debug key. Updates require the same signing key, so a build from another developer may require uninstalling the existing app. Configure release signing before distributing a production APK.
+
+### Checks
 
 ```powershell
-# Engine parsing, URL handling, filenames, and cancellation
+# Engine tests
 .\android\gradlew.bat -p android :engine:test
 
-# Browser extension with mocked browser APIs
+# Extension tests (requires Node.js; uses mocked browser APIs)
 node .\tests\test_extension.cjs
 
-# Split and rejoin a local MP4 fixture containing video AND audio
+# MP4 merge test, using a local fixture with both video and audio
 .\android\gradlew.bat -p android :engine:test "-PsmokeMedia=C:\path\to\fixture.mp4"
 
 # Live download through the built Windows native host
 powershell -ExecutionPolicy Bypass -File .\tests\Smoke-Windows.ps1
 ```
 
-The live smoke test uses the network and writes to an isolated temporary folder. The MP4 merge test is skipped unless `smokeMedia` is supplied. See [VALIDATION.md](VALIDATION.md) for recorded checks and the remaining device-testing limits.
-
-## Project layout
-
-```text
-engine/             Shared Java extraction, network, download, and MP4 merging
-android/            Kotlin app, share target, foreground service, Gradle wrapper
-desktop/            Windows Java UI and browser native-messaging host
-browser-extension/  Chrome / Edge toolbar action and progress display
-scripts/            Build, package, and browser registration scripts
-tests/              Extension tests and Windows integration checks
-```
+The merge test is skipped without a fixture. The live smoke test uses the network and saves to an isolated temporary folder. [VALIDATION.md](VALIDATION.md) records previous results and the Android device checks still outstanding.
 
 ## Troubleshooting
 
-| Symptom | What to check |
+| Problem | What to check |
 | --- | --- |
-| Android reports `inStream parameter is null` | Rebuild / update to 2.0.2. This fixes mp4parser settings-resource loading when combining YouTube video and audio on Android. |
-| YouTube reports `Could not get ytInitialData` | Retry the link. If it persists, report the URL and error; extraction can fail when YouTube changes or returns an unexpected response. |
-| Instagram cannot return a video | Try the full public post / reel URL. Private content and anonymous-request restrictions may still block it. |
-| Browser extension cannot connect | Check the extension ID, run registration again for the current app path, and reload the extension. |
-| Android has no visible progress | Open the app and enable notifications in Android settings. |
+| Extension cannot connect | Confirm the extension ID, register the current app path, and reload the extension. |
+| Android progress is missing | Open the app and enable notifications in Android settings. |
+| Android reports `inStream parameter is null` | Update or rebuild to version 2.0.2, which fixes mp4parser resource loading. |
+| YouTube reports `Could not get ytInitialData` | Retry. If it persists, report the URL and exact error; the source may have changed or blocked the request. |
+| Instagram cannot find a video | Try the full public post or reel URL. Anonymous access may still be restricted. |
 
-Windows settings live at `%APPDATA%\EzSocialToVideo\settings.json`; download results and errors are recorded in `background.log` in the same directory. Deleting the portable app leaves your settings and saved videos in place.
+Windows settings are in `%APPDATA%\EzSocialToVideo\settings.json`. Browser downloads log results and errors to `background.log` in the same folder. Removing the portable app leaves settings and downloaded videos in place.
 
-For a bug report, include the source URL, platform / OS version, app version, sharing method, and exact error. Avoid posting private links or account credentials.
+For bug reports, include the URL, OS and app version, whether you pasted or shared the link, and the exact error. Keep private links and credentials out of reports.
 
-## License and credits
+## Source layout
 
-Distributed under [GNU GPL v3 or later](LICENSE). Built with NewPipe Extractor, OkHttp, Gson, Jsoup, mp4parser, and other open-source libraries. See [THIRD_PARTY.md](THIRD_PARTY.md) for dependency licenses and redistribution details.
+```text
+engine/             Shared Java extraction, downloads, and MP4 merging
+desktop/            Windows Swing app and browser native-messaging host
+android/            Kotlin app, share target, and download service
+browser-extension/  Chrome / Edge actions and progress indicator
+scripts/            Build, packaging, and browser registration
+tests/              Extension and Windows integration checks
+docs/screenshots/   Windows app captures used above
+```
+
+## License
+
+[GNU GPL v3 or later](LICENSE). Uses NewPipe Extractor, OkHttp, Gson, Jsoup, mp4parser, and other open-source libraries. Dependency licenses and redistribution notes are in [THIRD_PARTY.md](THIRD_PARTY.md).
